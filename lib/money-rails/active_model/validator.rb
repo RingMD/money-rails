@@ -53,15 +53,15 @@ module MoneyRails
       end
 
       def decimal_mark
-        @_decimal_mark ||= I18n.t('number.currency.format.separator', default: currency.decimal_mark)
+        @_decimal_mark ||= fetch_from_locale_or_default('number.currency.format.separator', currency.decimal_mark)
       end
 
       def thousands_separator
-        @_thousands_separator ||= I18n.t('number.currency.format.delimiter', default: currency.thousands_separator)
+        @_thousands_separator ||= fetch_from_locale_or_default('number.currency.format.delimiter', currency.thousands_separator)
       end
 
       def symbol
-        @_symbol ||= I18n.t('number.currency.format.unit', default: currency.symbol)
+        @_symbol ||= fetch_from_locale_or_default('number.currency.format.unit', currency.symbol)
       end
 
       def raw_value_is_non_numeric
@@ -110,6 +110,11 @@ module MoneyRails
           .gsub(thousands_separator, '')
           .gsub(decimal_mark, '.')
           .gsub(/[\s_]/, '')
+      end
+
+      # Fetch money format from locale only if money use i18n
+      def fetch_from_locale_or_default(key, default)
+        Money.use_i18n ? I18n.t(key, default: default) : default
       end
     end
   end
